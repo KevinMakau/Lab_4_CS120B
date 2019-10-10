@@ -12,13 +12,16 @@
 #include "simAVRHeader.h"
 #endif
 
-typedef enum States {init, waitA0, pressA0, waitA1, pressA1, reset} States;
+
+#define 
+typedef enum States {init, outside, inside, wait#, waitY, unlock, lockX, lockY, lockZ} States;
 int buttonState (int);
 
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTC = 0x07;
+	DDRC = 0xFF; PORTC = 0x00;
+	DDRB = 0xFF; PORTB = 0x00;
 
 
 
@@ -34,41 +37,49 @@ int main(void) {
 }
 
 int buttonState (int state){
-	unsigned char A0 = PINA & 0x01;
-	unsigned char A1 = PINA & 0x02;
+	unsigned char X = PINA & 0x01;
+	unsigned char Y = PINA & 0x02;
+	unsigned char # = PINA & 0x04;
+	unsigned char inSide = PINA & 0x80;
 
-	if(A0 && A1){
-		state = reset;
-	}
+
 	switch (state) {
 		case init:
-			state = A0? pressA0: init;
-			state = A1? pressA1: state;
+			state = inSide? inside: outside;
 			break;
-		case pressA0:
-			state = waitA0;
-			if(PORTC != 9){ 
-				PORTC = PORTC + 1;
-			}
+		case outside:
+			state = #? wait#: init;
 			break;
-		case waitA0:
-			state = !A0? init: waitA0;
+		case wait#:
+			state = #? wait#: waitY;
 			break;
-		case pressA1:
-			state = waitA1;
-			if (PORTC != 0){
-				PORTC = PORTC - 1;
-			}
+		case waitY:
+			state = X? init: waitY;
+			state = #? wait#: state;
+			state = Y? lock: state;
 			break;
-		case waitA1:
-			state = !A1? init: waitA1;
+		case unlock:
+			PORTB = 0X01;
+			state = Y? unlock: init;
 			break;
-		case reset:
-			PORTC = 0;
-			if(!(A0 | A1)){
-				state = init;
-			}
+		case inside:
+			state = #? lock#: init;
+			state = X? lockX: state;
+			state = Y? lockY: state;
 			break;
+		case lockX:
+			PORTB = 0x00;
+			state = X? lockX: init
+			break; 
+		case lockY:
+			PORTB = 0x00;
+			state = Y? lockY: init;
+			break; 
+		case lock#:
+			PORTB = 0x00;
+			state = #? lock#: waitY;
+			break;
+
 	}
 	return state;
 }
