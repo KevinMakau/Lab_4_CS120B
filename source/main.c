@@ -13,8 +13,7 @@
 #endif
 
 
-#define 
-typedef enum States {init, outside, inside, wait#, waitY, unlock, lockX, lockY, lockZ} States;
+typedef enum States {init, outside, inside, waitZ, waitY, unlock, lockX, lockY, lockZ} States;
 int buttonState (int);
 
 int main(void) {
@@ -39,45 +38,54 @@ int main(void) {
 int buttonState (int state){
 	unsigned char X = PINA & 0x01;
 	unsigned char Y = PINA & 0x02;
-	unsigned char # = PINA & 0x04;
+	unsigned char Z = PINA & 0x04;
 	unsigned char inSide = PINA & 0x80;
 
 
 	switch (state) {
 		case init:
 			state = inSide? inside: outside;
+			PORTC = 1;
 			break;
 		case outside:
-			state = #? wait#: init;
+			state = Z? waitZ: init;
+			PORTC = 2;
 			break;
-		case wait#:
-			state = #? wait#: waitY;
+		case waitZ:
+			state = Z? waitZ: waitY;
+			PORTC = 3;
 			break;
 		case waitY:
 			state = X? init: waitY;
-			state = #? wait#: state;
-			state = Y? lock: state;
+			state = Z? waitZ: state;
+			state = Y? unlock: state;
+			PORTC = 4;
 			break;
 		case unlock:
 			PORTB = 0X01;
 			state = Y? unlock: init;
+			PORTC = 5;
 			break;
 		case inside:
-			state = #? lock#: init;
+			state = Z? lockZ: init;
 			state = X? lockX: state;
 			state = Y? lockY: state;
+			PORTC = 6;
 			break;
 		case lockX:
 			PORTB = 0x00;
-			state = X? lockX: init
+			state = X? lockX: init;
+			PORTC = 7;
 			break; 
 		case lockY:
 			PORTB = 0x00;
 			state = Y? lockY: init;
+			PORTC = 8;
 			break; 
-		case lock#:
+		case lockZ:
 			PORTB = 0x00;
-			state = #? lock#: waitY;
+			state = Z? lockZ: waitY;
+			PORTC = 9;
 			break;
 
 	}

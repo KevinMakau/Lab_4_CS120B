@@ -40,112 +40,13 @@ echo Running all tests..."\n\n
 
 # Add tests below
 
-test "PINA: 0x00 => PINC = 0x07"
+test "PINA: 0x80 => PINB = 0x00"
 setPINA 0x00
 continue 2
-expectPORTC 0x07
-checkResult
-
-test "PINA: 0x01 => PINC = 0x08"
-setPINA 0x01
-continue 2
-expectPORTC 0x08
-checkResult
-
-test "PINA: 0x03 => PINC = 0x00"
-setPINA 0x03
-continue 2
-expectPORTC 0x00
-checkResult
-
-test "PINA: 0x01 => PINC = 0x00"
-setPINA 0x01
-continue 2
-expectPORTC 0x00
-checkResult
-
-test "PINA: 0x00 => PINC = 0x00"
-setPINA 0x00
-continue 2
-expectPORTC 0x00
-checkResult
-
-test "PINA: 0x01 => PINC = 0x01"
-setPINA 0x01
-continue 2
+expectPORTB 0x00
 expectPORTC 0x01
 checkResult
 
-test "PINA: 0x00 => 0x01 => PINC = 0x02"
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-expectPORTC 0x02
-checkResult
-
-test "PINA: 0x00 => 0x02 => PINC = 0x01"
-setPINA 0x00
-continue 2
-setPINA 0x02
-continue 2
-expectPORTC 0x01
-checkResult
-
-
-test "PINA: 0x03 => 0x00 => 0x02 => PINC = 0x00"
-setPINA 0x00
-continue 2
-setPINA 0x02
-continue 2
-expectPORTC 0x00
-checkResult
-
-
-
-test "PINA: 0x00 => 0x01 => 0x00 => 01... => PINC = 0x09"
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-setPINA 0x00
-continue 2
-setPINA 0x01
-continue 2
-expectPORTC 0x09
-checkResult
 
 
 
